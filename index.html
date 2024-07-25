@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe with AI</title>
+<style>
+body {
+    background-color: lavender; /* Sets the background to lavender */
+}
+
+#gameBoard {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
+    margin-bottom: 20px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #f4f4f4;
+    border: none;
+    font-size: 24px;
+    color: #333;
+}
+
+#gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+#statusArea {
+    margin-top: 20px;
+    color: #800080; /* Sets text color to purple */
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div id="gameContainer">
+    <div id="gameBoard">
+        <button class="cell" onclick="playerMove(this,0)"></button>
+        <button class="cell" onclick="playerMove(this,1)"></button>
+        <button class="cell" onclick="playerMove(this,2)"></button>
+        <button class="cell" onclick="playerMove(this,3)"></button>
+        <button class="cell" onclick="playerMove(this,4)"></button>
+        <button class="cell" onclick="playerMove(this,5)"></button>
+        <button class="cell" onclick="playerMove(this,6)"></button>
+        <button class="cell" onclick="playerMove(this,7)"></button>
+        <button class="cell" onclick="playerMove(this,8)"></button>
+    </div>
+    <button onclick="resetGame()">Reset Game</button>
+    <p id="statusArea">Player X's turn</p>
+</div>
+<script>
+const gameBoard = Array(9).fill(null);
+let currentPlayer = 'X'; // Player always starts first
+
+function playerMove(cell, index) {
+    if (gameBoard[index] || isGameOver()) {
+        return;
+    }
+    makeMove(cell, index);
+    setTimeout(aiMove, 500); // AI makes a move after 500ms
+}
+
+function aiMove() {
+    if (isGameOver()) return;
+    const availableMoves = gameBoard.map((v, i) => v === null ? i : null).filter(v => v !== null);
+    if (availableMoves.length === 0) return;
+    const aiMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    const cell = document.getElementsByClassName('cell')[aiMove];
+    makeMove(cell, aiMove);
+}
+
+function makeMove(cell, index) {
+    gameBoard[index] = currentPlayer;
+    cell.innerText = currentPlayer;
+    if (checkWinner()) {
+        document.getElementById('statusArea').innerText = "Спокойной ночи, самая красивая соска с самым красивым маникюром 🤍";
+    } else if (gameBoard.every(cell => cell !== null)) {
+        document.getElementById('statusArea').innerText = "Ариша, попробуй еще раз";
+    } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        document.getElementById('statusArea').innerText = `Player ${currentPlayer}'s turn`;
+    }
+}
+
+function checkWinner() {
+    const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+    return winPatterns.some(pattern => {
+        return pattern.every(index => gameBoard[index] === currentPlayer);
+    });
+}
+
+function isGameOver() {
+    return checkWinner() || gameBoard.every(cell => cell !== null);
+}
+
+function resetGame() {
+    gameBoard.fill(null);
+    document.querySelectorAll('.cell').forEach(cell => cell.innerText = '');
+    currentPlayer = 'X';
+    document.getElementById('statusArea').innerText = "Player X's turn";
+}
+</script>
+</body>
+</html>
